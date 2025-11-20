@@ -112,6 +112,9 @@ Accuracy                       0.6418
 
 Our knn model did not do as well as our random forest model. Looking at the PR and ROC curve we can see that it’s clearly worse than the curves we had from random forest. However we can still see the same trends for which openings our model was able to classify better than others, for both random forest and knn classification of Sicilian Defence was one of the best while Reti Opening was the worst.
 
+### Random Baseline
+We also had a random baseline that would just output a random opening. We can see in our graphs that our models did better than the random baseline.
+
 
 ## Ideas for final report
 
