@@ -116,8 +116,13 @@ Our knn model did not do as well as our random forest model. Looking at the PR a
 We also had a random baseline that would just output a random opening. We can see in our graphs that our models did better than the random baseline.
 
 
-## Ideas for final report
+## General Strength and Weakness
+A general weakness of our model is that currently we're just classifying by opening family and not the fully specific variation. Another weakness is that we are using 768 dimensions to encode where each piece is on the board.
 
+A general strength is that our model is doing pretty good in at least classifying the opening family. Looking at the metrics for the RF model it's generally pretty strong in the classification for a decent amount of opening families.
+
+## Possible reasons for error/bias
 We did a 80/20 train test split for each opening but looking at the opening that had the best pr curve we noticed that it was an opening that had the 2nd most appearances in our dataset. This could mean that the models that appeared more times in our training test were able to be better classified so one thing we might do in the future is to use the same amount of occurrences of each opening in both our train and test data.
 
+## Ideas for final report
 Some ideas we have for our final report is to see if we can do any dimensionality reduction. Obviously 768 dimensions is a lot and could be limiting the performance of our classifier. We will try to see if we can use something like SVD to get a smaller matrix to feed into our model. Another thing we are looking into is possibly using other models like XG Boost to see if that could also be another source of improvement. We are also considering other features not related to where pieces are located but other signals like material advantage, isolated pawns, and double pawns.
