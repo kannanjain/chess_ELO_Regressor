@@ -4,9 +4,16 @@ import numpy as np
 from pathlib import Path
 
 
+
 piece_map = {
     'p': 1, 'r': 2, 'n': 3, 'b': 4, 'q': 5, 'k': 6,  # Black pieces
     'P': 7, 'R': 8, 'N': 9, 'B': 10, 'Q': 11, 'K': 12  # White pieces
+}
+
+# Piece values for material calculation
+piece_values = {
+    'P': 1, 'N': 3, 'B': 3, 'R': 5, 'Q': 9, 'K': 0,  # White pieces
+    'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 0   # Black pieces
 }
 
 
@@ -26,6 +33,27 @@ def fen_to_tensor(fen):
                 file_idx += 1
     
     return board_tensor
+
+
+def calculate_material_points(fen_string):
+    board_state = fen_string.split()[0].split('/')
+    
+    white_points = 0
+    black_points = 0
+    
+    for row in board_state:
+        for char in row:
+            if char.isdigit():
+                continue
+            if char in piece_values:
+                if char.isupper():  # White piece
+                    white_points += piece_values[char]
+                else:  # Black piece
+                    black_points += piece_values[char]
+    
+    return white_points, black_points
+
+
 
 
 def extract_features_from_csv(input_csv, output_csv, fen_column='fen_move_10'):
@@ -63,9 +91,18 @@ def extract_features_from_csv(input_csv, output_csv, fen_column='fen_move_10'):
             # Flatten to 768 features (12 × 8 × 8)
             flattened = tensor.flatten()
             
+           
+            white_points, black_points = calculate_material_points(fen_string)
+            
+            
             feature_row = row.to_dict()
             for i, val in enumerate(flattened):
                 feature_row[f'feature_{i}'] = int(val)
+            
+           
+            feature_row['white_material_points'] = white_points
+            feature_row['black_material_points'] = black_points
+    
             
             feature_rows.append(feature_row)
         except Exception:
@@ -81,7 +118,7 @@ def extract_features_from_csv(input_csv, output_csv, fen_column='fen_move_10'):
         features_df = pd.DataFrame(feature_rows)
         features_df.to_csv(output_path, index=False)
         print(f"Saved to {output_path}")
-        print(f"Total features: {len(features_df.columns)} (768 tensor features + original columns)")
+        print(f"Total features: {len(features_df.columns)} (768 tensor features + 2 material point features + 1 stockfish evaluation + original columns)")
         return features_df
     else:
         print("No features extracted!")

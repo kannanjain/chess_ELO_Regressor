@@ -20,9 +20,14 @@ def load_features(csv_path):
     
     feature_cols = [f'feature_{i}' for i in range(768)]
     
+ 
+    if 'white_material_points' in df.columns and 'black_material_points' in df.columns:
+        feature_cols.extend(['white_material_points', 'black_material_points'])
+    
+    
     available_features = [col for col in feature_cols if col in df.columns]
-    if len(available_features) != 768:
-        print(f"Warning: Expected 768 features, found {len(available_features)}")
+    if len([f for f in feature_cols if f.startswith('feature_')]) != 768:
+        print(f"Warning: Expected 768 tensor features, found {len([f for f in available_features if f.startswith('feature_')])}")
         print("Running feature extraction first...")
         return None
     
@@ -35,7 +40,7 @@ def load_features(csv_path):
     return X, y
 
 
-def precision_at_k(y_true, y_pred_proba, classes, k=3):
+def precision_at_k(y_true, y_pred_proba, classes, k=1):
     label_to_idx = {label: idx for idx, label in enumerate(classes)}
     y_true_idx = np.array([label_to_idx[label] for label in y_true])
    
@@ -51,7 +56,7 @@ def precision_at_k(y_true, y_pred_proba, classes, k=3):
     return np.mean(hits)
 
 
-def recall_at_k(y_true, y_pred_proba, classes, k=3):
+def recall_at_k(y_true, y_pred_proba, classes, k=1):
     return precision_at_k(y_true, y_pred_proba, classes, k)
 
 
@@ -157,15 +162,31 @@ def train_random_forest(X_train, y_train, X_test, y_test):
     
     
     print("\n" + "="*60)
-    print("Top-K Metrics (Test Set):")
+    print("Top-1 Prediction Metrics (Test Set):")
     print("="*60)
-    prec_at_3 = precision_at_k(y_test, y_test_proba, model_classes, k=3)
-    rec_at_3 = recall_at_k(y_test, y_test_proba, model_classes, k=3)
-    map_at_3 = map_at_k(y_test, y_test_proba, model_classes, k=3)
     
-    print(f"Precision@3: {prec_at_3:.4f}")
-    print(f"Recall@3: {rec_at_3:.4f}")
-    print(f"MAP@3: {map_at_3:.4f}")
+  
+    y_test_pred_top1 = model_classes[np.argmax(y_test_proba, axis=1)]
+    
+   
+    from sklearn.metrics import precision_score, recall_score, precision_recall_fscore_support
+    
+    precision_top1 = precision_score(y_test, y_test_pred_top1, average='weighted', zero_division=0)
+    recall_top1 = recall_score(y_test, y_test_pred_top1, average='weighted', zero_division=0)
+    
+    print(f"Overall Precision (Top-1): {precision_top1:.4f}")
+    print(f"Overall Recall (Top-1): {recall_top1:.4f}")
+   
+    print("\nPer-Class Precision and Recall (Top-1 Prediction):")
+    print(f"{'Opening Family':<30} {'Precision':<12} {'Recall':<12}")
+    print("-" * 54)
+    
+    prec_per_class, rec_per_class, _, _ = precision_recall_fscore_support(
+        y_test, y_test_pred_top1, labels=model_classes, zero_division=0
+    )
+    
+    for i, class_name in enumerate(model_classes):
+        print(f"{class_name:<30} {prec_per_class[i]:<12.4f} {rec_per_class[i]:<12.4f}")
     
     
     print("\n" + "="*60)
