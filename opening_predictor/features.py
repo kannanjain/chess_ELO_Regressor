@@ -132,7 +132,7 @@ if __name__ == "__main__":
     print("Extracting features from train.csv...")
     print("="*60)
     extract_features_from_csv(
-        script_dir / 'train.csv',
+        script_dir / 'prep/train.csv',
         script_dir / 'train_features.csv',
         fen_column='fen_move_10'
     )
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     print("Extracting features from test.csv")
     print("="*60)
     extract_features_from_csv(
-        script_dir / 'test.csv',
+        script_dir / 'prep/test.csv',
         script_dir / 'test_features.csv',
         fen_column='fen_move_10'
     )
