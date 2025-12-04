@@ -53,9 +53,7 @@ Accuracy: 0.7136
 Overall Precision: 0.7207
 Overall Recall: 0.7136
 ```
-Looking at this, for most of the openings, there’s a good balance of both precision and recall and most f1-scores are above 0.6.
-
-Looking at the [PR-AUC curve](../pr_curve_final.png) the model had strong performance in classifying all openings. Even the openings with lower PR-AUC curves were still much better than randomly assigning an opening. Random assignment of an opening would lead to a precision of 0.0476 and all classes had a curve significantly higher than 0.048 for most recall values. This demonstrates that the model actually learned how to classify openings.
+Looking at this, for most of the openings, there’s a good balance of both precision and recall and most f1-scores are above 0.6. Looking at the [PR-AUC curve](../pr_curve_final.png) the model had strong performance in classifying all openings. Even the openings with lower PR-AUC curves were still much better than randomly assigning an opening. Random assignment of an opening would lead to a precision of 0.0476 and all classes had a curve significantly higher than 0.048 for most recall values. This demonstrates that the model actually learned how to classify openings.
 
 Taking a closer look at the classes that didn't have a good precision and recall balance, it was noticed that they appeared in the dataset less frequently than other openings. Although an 80/20 split for each opening family was used to have a good representation of each family in the training set, the amount of times each opening showed up in the training dataset differed depending on its frequency in the overall dataset ranging from 9713 to 1025. 
 
