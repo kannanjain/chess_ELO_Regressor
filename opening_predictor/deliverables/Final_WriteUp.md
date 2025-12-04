@@ -1,9 +1,9 @@
 # Contributors: Kannan Jain & Rachana Raju
 
 ## Motivation:
-People are increasingly saying that chess games are becoming more and more memorized. This is hard to believe given that there are ~400 different moves a game can take within the first full move. This number only increases with each move thereafter so it’s impossible to memorize every single game possible. However a common strategy is for players to learn different openings which are the first 5-10 moves a player plays in the game. These initial moves determine how the board develops as the game progresses. Additionally many players practice by solving various exercises called chess puzzles. These exercises usually present players with a board in the middle game where one side has an advantage and the player brainstorms the best way to take advantage of the board position. A player may want to practice opening lines that may lead to these puzzle-like positions advantageous to the color they’re playing as. This was the motivation behind building our chess opening classifier. 
+People often say that chess games are becoming increasingly memorized. This is hard to believe given that there are ~400 different moves a game can take within the first full move. This number only increases with each move thereafter. Thus, it’s impossible to memorize every single game possible. However a common strategy is for players to learn common first 5-10 moves a player plays in the game, called openings. These initial moves determine how the board develops as the game progresses. Additionally many players practice by solving various exercises called chess puzzles. These exercises usually present players with a board in the middle game where one side has an advantage and the player brainstorms the best way to take advantage of the board position. A player may want to practice opening lines that may lead to these puzzle-like positions advantageous to the color they’re playing as. This was the motivation behind building our chess opening classifier. 
 
-## Data retrieval, cleaning, and feature engineering:
+## Data Preparation and Feature Engineering:
 The data source is [this kaggle dataset](https://www.kaggle.com/datasets/adityajha1504/chesscom-user-games-60000-games/data) with over 60,000 games from chess.com. The goal of this model is to identify an opening origin given a middle game chess board position. This analysis uses the board position after 10 moves as a middle game position. For this analysis, 10 full moves were chosen as the middle game point because the majority of the audience on chess.com are not professional players who practice extended opening variation up to 10-12 moves but instead players who play chess as a hobby and deviate from an opening after 5-6 moves. Our goal was to analyze early middle games so that a potential puzzle position can be tied back to an opening.
 
 The dataset had information about an opening as EcoName and EcoCodes. EcoCodes were used to group variations on one big opening as an opening family. Here are the mappings used: https://www.365chess.com/eco.php. Using these, the opening families with the highest number of games played (the most popular openings with more than 1000 games) were identified. 
@@ -11,9 +11,6 @@ The dataset had information about an opening as EcoName and EcoCodes. EcoCodes w
 Next, the PGN, a sequence of chess moves, was utilized to extract board positions in a format called FEN at every single move up until move 15. This was done because we were not sure if we wanted to feed a sequence of FENs (board positions) such as moves 10-12 to our model or just the FEN (position at a single move). While the dataset had an FEN column, it wasn’t helpful for this use case because that FEN came from the position the game was ended at. Thus, creating our own FENs was a crucial step.
 
 In order to embed the FEN in the chess board, a 3d array representing each unique piece’s position on the chess board was constructed. The 3d array, consisting of 12 8x8 matrices was flattened into a 1d array of 768 features to be fed into the model
-
-
-## Creating Train and Test Split
 
 The train and test split was created by randomly choosing 80 percent of each opening family’s occurrences to be in the training set. The remaining 20 percent for each opening family was used for the test set.
 
